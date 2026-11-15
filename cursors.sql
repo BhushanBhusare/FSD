@@ -11,7 +11,7 @@ CREATE TABLE N_RollCall (
     Name VARCHAR(30)
 );
 
--- 2. INSERT RECORDS
+-- 2. INSERT DATA
 INSERT INTO O_RollCall VALUES
 (1, 'Rahul'),
 (2, 'Amit'),
@@ -20,60 +20,41 @@ INSERT INTO O_RollCall VALUES
 INSERT INTO N_RollCall VALUES
 (1, 'Rahul');
 
--- 3. CREATE PROCEDURE WITH PARAMETERIZED CURSOR
+-- 3. CREATE PROCEDURE
 DELIMITER //
 
-CREATE PROCEDURE Merge_RollCall(IN p_start INT)
-
+CREATE PROCEDURE MergeData(IN p_roll INT)
 BEGIN
-    DECLARE v_roll INT;
-    DECLARE v_name VARCHAR(30);
-    DECLARE v_done INT DEFAULT 0;
-    DECLARE v_count INT DEFAULT 0;
+    DECLARE r INT;
+    DECLARE n VARCHAR(30);
+    DECLARE done INT DEFAULT 0;
 
-    -- PARAMETERIZED CURSOR
-    DECLARE cur CURSOR FOR
-        SELECT RollNo, Name
-        FROM O_RollCall
-        WHERE RollNo >= p_start;
+    DECLARE c CURSOR FOR
+        SELECT RollNo, Name FROM O_RollCall
+        WHERE RollNo >= p_roll;
 
-    -- CURSOR EXCEPTION HANDLER
-    DECLARE CONTINUE HANDLER FOR NOT FOUND
-        SET v_done = 1;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
 
-    OPEN cur;
+    OPEN c;
 
     read_loop: LOOP
+        FETCH c INTO r, n;
 
-        FETCH cur INTO v_roll, v_name;
-
-        IF v_done = 1 THEN
+        IF done THEN
             LEAVE read_loop;
         END IF;
 
-        -- CHECK DUPLICATE RECORD
-        SELECT COUNT(*) INTO v_count
-        FROM N_RollCall
-        WHERE RollNo = v_roll;
-
-        -- INSERT ONLY IF NOT EXISTS
-        IF v_count = 0 THEN
-
-            INSERT INTO N_RollCall
-            VALUES (v_roll, v_name);
-
+        IF NOT EXISTS (SELECT 1 FROM N_RollCall WHERE RollNo = r) THEN
+            INSERT INTO N_RollCall VALUES (r, n);
         END IF;
-
     END LOOP;
 
-    CLOSE cur;
-
+    CLOSE c;
 END //
 
 DELIMITER ;
 
--- 4. EXECUTE PROCEDURE
-CALL Merge_RollCall(1);
+CALL MergeData(1);
 
--- 5. DISPLAY FINAL TABLE
+-- 5. DISPLAY FINAL DATA
 SELECT * FROM N_RollCall;
