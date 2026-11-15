@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>String Operations</title>
+</head>
+<body>
+
+    <h2>Student Information</h2>
+
+    <input type="text" id="name" placeholder="Enter Name"><br><br>
+    <input type="text" id="age" placeholder="Enter Age"><br><br>
+    <input type="text" id="email" placeholder="Enter Email"><br><br>
+
+    <button onclick="process()">Submit</button>
+
+    <h3 id="result"></h3>
+
+    <script>
+
+    function process() {
+
+        let n = document.getElementById("name").value.trim();
+        let a = document.getElementById("age").value.trim();
+        let e = document.getElementById("email").value.trim();
+
+        // Validation
+        if(n == "" || a == "" || !e.includes("@")) {
+            alert("Invalid Details");
+            return;
+        }
+
+        // Type Conversion
+        let age = Number(a);
+
+        if(isNaN(age) || age <= 0) {
+            alert("Enter Valid Age");
+            return;
+        }
+
+        // String Formatting
+        let name = n.charAt(0).toUpperCase() +
+                   n.slice(1).toLowerCase();
+
+        // Extract Email Domain
+        let domain = e.substring(e.indexOf("@") + 1);
+
+        document.getElementById("result").innerHTML =
+            "Name: " + name +
+            "<br>Age: " + age +
+            "<br>Email Domain: " + domain;
+    }
+
+    </script>
+
+</body>
+</html>

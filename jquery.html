@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>jQuery Events</title>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+
+<h2 id="text">Welcome to jQuery</h2>
+
+<button id="hide">Hide</button>
+<button id="show">Show</button>
+<button id="animate">Animate</button>
+
+<script>
+
+// Click Event
+$("#hide").click(function() {
+    $("#text").fadeOut();
+});
+
+$("#show").click(function() {
+    $("#text").fadeIn();
+});
+
+// Animation
+$("#animate").click(function() {
+    $("#text").animate({
+        fontSize: "30px"
+    });
+});
+
+// Hover Event
+$("#text").hover(
+    function() {
+        $(this).css("color", "red");
+    },
+    function() {
+        $(this).css("color", "black");
+    }
+);
+
+</script>
+</body>
+</html>
